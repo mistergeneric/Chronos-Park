@@ -1,3 +1,4 @@
+//andrew ncneill
 package model;
 
 public class Ride {
@@ -126,5 +127,21 @@ public class Ride {
 
     public void setHorror(boolean horror) {
         this.horror = horror;
+    }
+
+    public boolean getPreference(String type) {
+        switch (type) {
+            case "wheelchair":
+                return isWheelchair();
+            case "water":
+                return isWater();
+            case "horror":
+                return isHorror();
+            case "kids":
+                return isKidFriendly();
+            case "adrenaline":
+                return isAdrenaline();
+        }
+        return false;
     }
 }

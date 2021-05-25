@@ -1,3 +1,4 @@
+//andrew ncneill
 package test;
 
 import model.Ride;
@@ -40,7 +41,14 @@ class TreeTest {
         assertFalse(tree.answerValidator(ride, true, 0, 6, 2));
         assertFalse(tree.answerValidator(ride, true, 0, 4, 3));
 
+    }
 
+    @Test
+    void wholeParkTree() {
+        Tree tree = new Tree();
+        assertEquals("group", tree.getRoot().getType());
+        assertEquals("smallHeight", tree.getRoot().getLeft().getType());
+        assertEquals("tallHeight", tree.getRoot().getRight().getType());
 
     }
 }

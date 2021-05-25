@@ -1,3 +1,4 @@
+//andrew mcneill
 package model.tree;
 
 public class TreeNode {
@@ -7,6 +8,13 @@ public class TreeNode {
     private TreeNode right;
     private boolean recommended;
     private String type;
+
+    //two constructors for two types of tree, allrides and single ride
+    public TreeNode(String question, TreeNode parent, String type) {
+        this.question = question;
+        this.parent = parent;
+        this.type = type;
+    }
 
     public TreeNode(String question, TreeNode parent, String type, boolean isRecommended) {
         this.question = question;

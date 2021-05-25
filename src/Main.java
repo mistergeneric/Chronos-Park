@@ -1,10 +1,14 @@
+//andrew ncneill
 import model.Preference;
 import model.Ride;
 import model.tree.Tree;
+import util.Utils;
 
+import java.util.List;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public class Main {
 
@@ -12,14 +16,13 @@ public class Main {
         System.out.println("Welcome to CHRONOS PARK!!!!!! ******");
         while (true) {
             System.out.println("Choose an option:");
-            System.out.println("1. Get your recommendations:");
-            System.out.println("2. Quit");
-        /*
-        For step 1, we will use The Iron Jaws as the test case
-         */
-            //for the max heights and max group size, because the ride does not have a level of max height or max group size, set it to max possible number
-            Ride ironJaws = new Ride("The Iron Jaws", 1, Integer.MAX_VALUE, false, 1, Integer.MAX_VALUE, true, false, false, false);
+            System.out.println("1. Get your recommendations for a ride:");
+            System.out.println("2. Get all your for whole park recommendations:");
 
+            System.out.println("8. Quit");
+
+            //I'm using a list of all rides because you can do things like filtering and streaming with that
+            List<Ride> allRides = Utils.generateRides();
 
             Scanner scanner = new Scanner(System.in);
 
@@ -32,10 +35,23 @@ public class Main {
             }
             switch (userInputParsed) {
                 case 1:
-                    //this takes a parameter because it will do different rides in future
-                    getRecommendations(ironJaws);
+                    System.out.println("What ride would you like recommendations for?");
+                    while(true) {
+                        String answer = scanner.nextLine();
+                        List<Ride> filteredRides = allRides.stream().filter(ride -> ride.getName().equals(answer)).collect(Collectors.toList());
+                        //there has been a match on the text the user has input for name
+                        if(filteredRides.size() > 0) {
+                            //there should be only one match
+                            getRecommendations(filteredRides.get(0));
+                            break;
+                        }
+                        System.out.println("Not valid name, please try again");
+                    }
                     break;
                 case 2:
+                    getWholePark(allRides);
+                    break;
+                case 8:
                     System.out.println("you have chosen to quit. Goodbye");
                     System.exit(0);
                     break;
@@ -73,6 +89,37 @@ public class Main {
             emailCheck(scanner);
         }
 
+    }
+
+    private static void getWholePark(List<Ride> allRides) {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Hi, what is your first name?");
+        String name = scanner.nextLine();
+        Tree tree = new Tree();
+
+        List<Ride> recommendedRides = tree.allRidesQuestion(allRides);
+
+
+        System.out.println("Would you like to print or emaiL? Choose E for email or P for print");
+
+
+
+        String answer = scanner.nextLine();
+
+        while((!answer.equals("P")) && (!answer.equals("E"))) {
+            System.out.println("please enter valid input");
+            answer = scanner.nextLine();
+        }
+        if(answer.equals("P")) {
+            if(recommendedRides.size() > 0) {
+                System.out.println("Here are your recommended rides:");
+                recommendedRides.forEach(ride -> System.out.println("You have been recommended: " + ride.getName()));
+            } else {
+                System.out.println("I'm sorry, none of our rides are recommended for you");
+            }
+        } else {
+            emailCheck(scanner);
+        }
     }
 
     private static void emailCheck(Scanner scanner) {

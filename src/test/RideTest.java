@@ -1,3 +1,4 @@
+//andrew ncneill
 package test;
 
 import model.Ride;
@@ -18,6 +19,15 @@ class RideTest {
         assertFalse(ride.isAdrenaline());
         assertFalse(ride.isWater());
         assertFalse(ride.isHorror());
+
+    }
+
+    @Test
+    void getPreference() {
+        Ride ride = new Ride("test", 0, 5, true, 1, 2, false, false, false, false);
+        assertFalse(ride.getPreference("water"));
+        assertFalse(ride.getPreference("horror"));
+        assertTrue(ride.getPreference("wheelchair"));
 
     }
 }
