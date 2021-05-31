@@ -21,20 +21,20 @@ public class Tree {
         TreeNode smallestHeight = new TreeNode("What is the height of the smallest person?", root, "smallHeight");
         TreeNode largestHeight = new TreeNode("What is the height of the tallest person?", root, "tallHeight");
         root.setLeft(smallestHeight);
-        root.setRight(largestHeight);
+        smallestHeight.setLeft(largestHeight);
 
         TreeNode wheelchair = new TreeNode("Does anyone in the group use a wheelchair?", smallestHeight, "wheelchair");
         TreeNode kids = new TreeNode("Does anyone have preference for kids rides?", smallestHeight, "kids");
-        smallestHeight.setLeft(wheelchair);
-        smallestHeight.setRight(kids);
+        largestHeight.setLeft(wheelchair);
+        wheelchair.setLeft(kids);
 
         TreeNode horror = new TreeNode("Does anyone have preference for horror rides?", largestHeight, "horror");
         TreeNode water = new TreeNode("Does anyone have preference for water rides?", largestHeight, "water");
-        largestHeight.setLeft(horror);
-        largestHeight.setRight(water);
+        kids.setLeft(horror);
+        horror.setLeft(water);
 
         TreeNode adrenaline = new TreeNode("Does anymore have preference for adrenaline?", horror, "adrenaline");
-        wheelchair.setLeft(adrenaline);
+        water.setLeft(adrenaline);
 
     }
 
@@ -45,20 +45,20 @@ public class Tree {
         TreeNode smallestHeight = new TreeNode("What is the height of the smallest person?", root, "smallHeight");
         TreeNode largestHeight = new TreeNode("What is the height of the tallest person?", root, "tallHeight");
         root.setLeft(smallestHeight);
-        root.setRight(largestHeight);
+        smallestHeight.setLeft(largestHeight);
 
         TreeNode wheelchair = new TreeNode("Does anyone in the group use a wheelchair?", smallestHeight, "wheelchair", ride.isWheelchair());
         TreeNode kids = new TreeNode("Does anyone have preference for kids rides?", smallestHeight, "kids", ride.isKidFriendly());
-        smallestHeight.setLeft(wheelchair);
-        smallestHeight.setRight(kids);
+        largestHeight.setLeft(wheelchair);
+        wheelchair.setLeft(kids);
 
         TreeNode horror = new TreeNode("Does anyone have preference for horror rides?", largestHeight, "horror", ride.isHorror());
         TreeNode water = new TreeNode("Does anyone have preference for water rides?", largestHeight, "water", ride.isWater());
-        largestHeight.setLeft(horror);
-        largestHeight.setRight(water);
+        kids.setLeft(horror);
+        horror.setLeft(water);
 
         TreeNode adrenaline = new TreeNode("Does anymore have preference for adrenaline?", horror, "adrenaline", ride.isAdrenaline());
-        wheelchair.setLeft(adrenaline);
+        water.setLeft(adrenaline);
     }
 
     public TreeNode getRoot() {
@@ -93,38 +93,26 @@ public class Tree {
         String answer;
         String preferences = "";
 
-        //we are going to use bfs to traverse
-        Queue<TreeNode> queue = new LinkedList<>();
+        while (node != null) {
 
-        queue.add(node);
-        while (!queue.isEmpty()) {
-            TreeNode question = queue.poll();
-
-
-            System.out.println(question.getQuestion());
-            if (question.getType().equals("smallHeight")) {
+            System.out.println(node.getQuestion());
+            if (node.getType().equals("smallHeight")) {
                 shortestHeight = heightValidator(shortestHeight);
-            } else if (question.getType().equals("tallHeight")) {
+            } else if (node.getType().equals("tallHeight")) {
                 tallestHeight = heightValidator(tallestHeight);
                 tallestHeight = tallestHeightIsValid(shortestHeight, tallestHeight);
-            } else if (question.getType().equals("group")) {
+            } else if (node.getType().equals("group")) {
                 groupSize = Utils.getNumber();
             } else {
                 answer = Utils.yesOrNo();
-                preferences += "The group answered to the question " + question.getQuestion() + "\n" + (answer.equals("Y") ? "Yes" : "No") + "\n ----------- \n";
+                preferences += "The group answered to the question " + node.getQuestion() + "\n" + (answer.equals("Y") ? "Yes" : "No") + "\n ----------- \n";
                 if (answer.equals("Y")) {
-                    if (question.isRecommended()) {
+                    if (node.isRecommended()) {
                         isRideRecommended = true;
                     }
                 }
             }
-            if (question.getLeft() != null) {
-                queue.add(question.getLeft());
-            }
-            if (question.getRight() != null) {
-                queue.add(question.getRight());
-            }
-
+            node = node.getLeft();
         }
         isRideRecommended = answerValidator(ride, isRideRecommended, shortestHeight, tallestHeight, groupSize);
         return new Preference(isRideRecommended, preferences);
@@ -140,41 +128,29 @@ public class Tree {
         String answer;
         String preferences = "";
 
-        //we are going to use bfs to traverse
-        Queue<TreeNode> queue = new LinkedList<>();
-
-        queue.add(node);
-        while (!queue.isEmpty()) {
-            TreeNode question = queue.poll();
-
-
-            System.out.println(question.getQuestion());
-            if (question.getType().equals("smallHeight")) {
+        while (node != null) {
+            System.out.println(node.getQuestion());
+            if (node.getType().equals("smallHeight")) {
                 final float shortestHeight = heightValidator(0);
                 filteredList = rides.stream()
                         .filter(ride -> ride.getMinimumHeight() <= shortestHeight).collect(Collectors.toList());
-            } else if (question.getType().equals("tallHeight")) {
+            } else if (node.getType().equals("tallHeight")) {
                 final float tallestHeight = heightValidator(0);
                 filteredList = filteredList.stream()
                         .filter(ride -> ride.getMaximumHeight() >= tallestHeight).collect(Collectors.toList());
-            } else if (question.getType().equals("group")) {
+            } else if (node.getType().equals("group")) {
                 final int groupSize = Utils.getNumber();
                 filteredList = filteredList.stream()
                         .filter(ride -> ride.getBiggestNumberCanRide() <= groupSize && ride.getSmallestNumberCanRide() >= groupSize).collect(Collectors.toList());
             } else {
                 answer = Utils.yesOrNo();
                 if (answer.equals("Y")) {
-                        filteredList = filteredList.stream()
-                                .filter(ride -> ride.getPreference(question.getType())).collect(Collectors.toList());
+                    TreeNode finalNode = node;
+                    filteredList = filteredList.stream()
+                                .filter(ride -> ride.getPreference(finalNode.getType())).collect(Collectors.toList());
                 }
             }
-            if (question.getLeft() != null) {
-                queue.add(question.getLeft());
-            }
-            if (question.getRight() != null) {
-                queue.add(question.getRight());
-            }
-
+        node = node.getLeft();
         }
         return filteredList;
     }
