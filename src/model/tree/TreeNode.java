@@ -7,7 +7,7 @@ public class TreeNode {
     private TreeNode left;
     private TreeNode right;
     private boolean recommended;
-    private String type;
+    private String type; //preference, smallestHeight, tallestHeight, groupSize
 
     //two constructors for two types of tree, allrides and single ride
     public TreeNode(String question, TreeNode parent, String type) {

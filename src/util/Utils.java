@@ -52,9 +52,9 @@ public class Utils {
         String answer = scanner.nextLine();
 
         while (true) {
-            if (answer.equals("Y") || answer.equals("y")) {
-                return answer;
-            } else if (answer.equals("N") || answer.equals("n")) {
+            if (answer.equalsIgnoreCase("Y")) {
+                return answe
+            } else if (answer.equalsIgnoreCase("N")) {
                 return answer;
             } else {
                 System.out.println("Input not understood, please try again");

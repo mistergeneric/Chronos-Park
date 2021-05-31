@@ -138,7 +138,6 @@ public class Tree {
         boolean isRideRecommended = false;
         List<Ride> filteredList = new ArrayList<>();
         String answer;
-        String preferences = "";
 
         //we are going to use bfs to traverse
         Queue<TreeNode> queue = new LinkedList<>();
