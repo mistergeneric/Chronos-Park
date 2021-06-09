@@ -6,9 +6,7 @@ import model.Ride;
 import util.Utils;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Queue;
 import java.util.stream.Collectors;
 
 public class Tree {
@@ -106,7 +104,7 @@ public class Tree {
             } else {
                 answer = Utils.yesOrNo();
                 preferences += "The group answered to the question " + node.getQuestion() + "\n" + (answer.equals("Y") ? "Yes" : "No") + "\n ----------- \n";
-                if (answer.equals("Y")) {
+                if (answer.equals("Y") || answer.equals("y")) {
                     if (node.isRecommended()) {
                         isRideRecommended = true;
                     }
@@ -129,27 +127,27 @@ public class Tree {
 
         while (node != null) {
             System.out.println(node.getQuestion());
-            if (node.getType().equals("smallHeight")) {
-                final float shortestHeight = heightValidator(0);
+            if (node.getType().equals("group")) {
+                final int groupSize = Utils.getNumber();
                 filteredList = rides.stream()
+                        .filter(ride -> groupSize <= ride.getBiggestNumberCanRide() && groupSize >= ride.getSmallestNumberCanRide()).collect(Collectors.toList());
+            } else if (node.getType().equals("smallHeight")) {
+                final float shortestHeight = heightValidator(0);
+                filteredList = filteredList.stream()
                         .filter(ride -> ride.getMinimumHeight() <= shortestHeight).collect(Collectors.toList());
             } else if (node.getType().equals("tallHeight")) {
                 final float tallestHeight = heightValidator(0);
                 filteredList = filteredList.stream()
                         .filter(ride -> ride.getMaximumHeight() >= tallestHeight).collect(Collectors.toList());
-            } else if (node.getType().equals("group")) {
-                final int groupSize = Utils.getNumber();
-                filteredList = filteredList.stream()
-                        .filter(ride -> ride.getBiggestNumberCanRide() <= groupSize && ride.getSmallestNumberCanRide() >= groupSize).collect(Collectors.toList());
             } else {
                 answer = Utils.yesOrNo();
                 if (answer.equals("Y")) {
                     TreeNode finalNode = node;
                     filteredList = filteredList.stream()
-                                .filter(ride -> ride.getPreference(finalNode.getType())).collect(Collectors.toList());
+                            .filter(ride -> ride.getPreference(finalNode.getType())).collect(Collectors.toList());
                 }
             }
-        node = node.getLeft();
+            node = node.getLeft();
         }
         return filteredList;
     }
