@@ -1,9 +1,12 @@
 //andrew ncneill
+import locations.Location;
+import model.Park;
 import model.Preference;
-import model.Ride;
+import locations.Ride;
 import model.tree.Tree;
 import util.Utils;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 import java.util.regex.Matcher;
@@ -11,18 +14,25 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class Main {
+    static Park park;
 
     public static void main(String[] args) {
+
+
         System.out.println("Welcome to CHRONOS PARK!!!!!! ******");
         while (true) {
             System.out.println("Choose an option:");
             System.out.println("1. Get your recommendations for a ride:");
             System.out.println("2. Get all your for whole park recommendations:");
+            System.out.println("3. Generate map of the park:");
+            System.out.println("4. Generate a personalised map");
+
 
             System.out.println("8. Quit");
 
-            //I'm using a list of all rides because you can do things like filtering and streaming with that
-            List<Ride> allRides = Utils.generateRides();
+            //I'm using a list of all rides because you can do things like filtering and streaming with that, contained within park object (the graph)
+            park = Utils.generatePark();
+            List<Ride> allRides = park.getAllRides();
 
             Scanner scanner = new Scanner(System.in);
 
@@ -51,6 +61,15 @@ public class Main {
                 case 2:
                     getWholePark(allRides);
                     break;
+                case 3:
+                    getMap(park.getAllLocations(), park);
+                    park.primMST();
+                    break;
+                case 4:
+                    System.out.println("Please enter your recommended rides:");
+                    List<Location> recommended = getWholePark(allRides);
+                    getMap(recommended, park);
+                    break;
                 case 8:
                     System.out.println("you have chosen to quit. Goodbye");
                     System.exit(0);
@@ -58,6 +77,15 @@ public class Main {
                 default:
                     System.out.println("Option not recognised, returning to main menu");
                     break;
+            }
+        }
+    }
+
+    private static void getMap(List<Location> allLocations, Park park) {
+        for (Location l :
+                allLocations) {
+            if (l.isEntrance()) {
+                park.shortestPathFromEntrance(l, allLocations);
             }
         }
     }
@@ -91,7 +119,7 @@ public class Main {
 
     }
 
-    private static void getWholePark(List<Ride> allRides) {
+    private static List<Location> getWholePark(List<Ride> allRides) {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Hi, what is your first name?");
         String name = scanner.nextLine();
@@ -101,8 +129,6 @@ public class Main {
 
 
         System.out.println("Would you like to print or emaiL? Choose E for email or P for print");
-
-
 
         String answer = scanner.nextLine();
 
@@ -120,6 +146,15 @@ public class Main {
         } else {
             emailCheck(scanner);
         }
+        List<Location> recommendedLocation = new ArrayList<>();
+        park.getAllLocations().forEach(l -> {
+            if (l.isEntrance()) {
+                recommendedLocation.add(l);
+            } else if (recommendedRides.contains(l)) {
+                recommendedLocation.add(l);
+            }
+        });
+        return recommendedLocation;
     }
 
     private static void emailCheck(Scanner scanner) {

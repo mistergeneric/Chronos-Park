@@ -1,9 +1,8 @@
 //andrew ncneill
 package test;
 
-import model.Ride;
+import locations.Ride;
 import model.tree.Tree;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

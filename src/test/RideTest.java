@@ -1,7 +1,7 @@
 //andrew ncneill
 package test;
 
-import model.Ride;
+import locations.Ride;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;

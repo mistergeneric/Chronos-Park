@@ -1,8 +1,8 @@
 //Andrew McNeill
 package model.tree;
 
+import locations.Ride;
 import model.Preference;
-import model.Ride;
 import util.Utils;
 
 import java.util.ArrayList;
